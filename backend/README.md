@@ -4,7 +4,7 @@
 
 ### Install Dependencies
 
-1. **Python 3.7** - Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
+1. **Python 3.11** - Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
 
 2. **Virtual Environment** - We recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organized. Instructions for setting up a virual environment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
 
@@ -48,57 +48,342 @@ flask run --reload
 
 The `--reload` flag will detect file changes and restart the server automatically.
 
-## To Do Tasks
+### Run Test File
 
-These are the files you'd want to edit in the backend:
+```bash
+python test_flaskr.py
+```
 
-1. `backend/flaskr/__init__.py`
-2. `backend/test_flaskr.py`
+# API Documentation
 
-One note before you delve into your tasks: for each endpoint, you are expected to define the endpoint and response data. The frontend will be a plentiful resource because it is set up to expect certain endpoints and response data formats already. You should feel free to specify endpoints in your own way; if you do so, make sure to update the frontend or you will get some unexpected behavior.
+## 1. **Get All Categories**
 
-1. Use Flask-CORS to enable cross-domain requests and set response headers.
-2. Create an endpoint to handle `GET` requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories.
-3. Create an endpoint to handle `GET` requests for all available categories.
-4. Create an endpoint to `DELETE` a question using a question `ID`.
-5. Create an endpoint to `POST` a new question, which will require the question and answer text, category, and difficulty score.
-6. Create a `POST` endpoint to get questions based on category.
-7. Create a `POST` endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question.
-8. Create a `POST` endpoint to get questions to play the quiz. This endpoint should take a category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions.
-9. Create error handlers for all expected errors including 400, 404, 422, and 500.
+### **Endpoint**: `/categories`
 
-## Documenting your Endpoints
+- **Method**: `GET`
+- **Description**: Retrieves all categories.
+- **Response**:
+  - **Status**: 200 OK
+  - **Body**:
+    ```json
+    {
+      "status": 200,
+      "categories": {
+        "<category_id>": "<category_type>"
+      }
+    }
+    ```
 
-You will need to provide detailed documentation of your API endpoints including the URL, request parameters, and the response body. Use the example below as a reference.
-
-### Documentation Example
-
-`GET '/api/v1.0/categories'`
-
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, `categories`, that contains an object of `id: category_string` key: value pairs.
+#### Example:
 
 ```json
 {
-  "1": "Science",
-  "2": "Art",
-  "3": "Geography",
-  "4": "History",
-  "5": "Entertainment",
-  "6": "Sports"
+  "status": 200,
+  "categories": {
+    "1": "Science",
+    "2": "Art"
+  }
 }
 ```
 
-## Testing
+---
 
-Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.
+## 2. **Get Paginated Questions**
 
-To deploy the tests, run
+### **Endpoint**: `/questions`
 
-```bash
-dropdb trivia_test
-createdb trivia_test
-psql trivia_test < trivia.psql
-python test_flaskr.py
+- **Method**: `GET`
+- **Description**: Retrieves a paginated list of questions.
+- **Query Parameters**:
+  - `page` (optional): Page number for pagination (defaults to 1).
+- **Response**:
+  - **Status**: 200 OK
+  - **Body**:
+    ```json
+    {
+      "status": 200,
+      "questions": [<question_object>, ...],
+      "total_questions": <total_count>,
+      "categories": {
+        "<category_id>": "<category_type>"
+      },
+      "current_category": "All"
+    }
+    ```
+
+#### Example:
+
+```json
+{
+  "status": 200,
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the capital of France?",
+      "answer": "Paris",
+      "difficulty": 1,
+      "category": "Geography"
+    }
+  ],
+  "total_questions": 50,
+  "categories": {
+    "1": "Science",
+    "2": "Art"
+  },
+  "current_category": "All"
+}
+```
+
+---
+
+## 3. **Update Question by ID**
+
+### **Endpoint**: `/questions/<int:id>`
+
+- **Method**: `PUT`
+- **Description**: Updates a question's details by its ID.
+- **Request Body**:
+  ```json
+  {
+    "question": "<new_question_text>",
+    "answer": "<new_answer_text>",
+    "difficulty": <new_difficulty_level>,
+    "category": "<new_category_id>"
+  }
+  ```
+- **Response**:
+  - **Status**: 200 OK or 400 Bad Request or 404 Not Found
+  - **Body** (on success):
+    ```json
+    {
+      "status": 200,
+      "message": "Success"
+    }
+    ```
+  - **Body** (on failure):
+    ```json
+    {
+      "status": 400,
+      "message": "Missing required params."
+    }
+    ```
+    or
+    ```json
+    {
+      "status": 404,
+      "message": "Question not found."
+    }
+    ```
+
+#### Example (Success):
+
+```json
+{
+  "status": 200,
+  "message": "Success"
+}
+```
+
+---
+
+## 4. **Delete Question by ID**
+
+### **Endpoint**: `/questions/<int:id>`
+
+- **Method**: `DELETE`
+- **Description**: Deletes a question by its ID.
+- **Response**:
+  - **Status**: 200 OK or 404 Not Found
+  - **Body** (on success):
+    ```json
+    {
+      "status": 200,
+      "message": "Success"
+    }
+    ```
+  - **Body** (on failure):
+    ```json
+    {
+      "status": 404,
+      "message": "Question not found"
+    }
+    ```
+
+#### Example (Success):
+
+```json
+{
+  "status": 200,
+  "message": "Success"
+}
+```
+
+---
+
+## 5. **Add a New Question**
+
+### **Endpoint**: `/questions`
+
+- **Method**: `POST`
+- **Description**: Adds a new question to the system.
+- **Request Body**:
+  ```json
+  {
+    "question": "<question_text>",
+    "answer": "<answer_text>",
+    "difficulty": <difficulty_level>,
+    "category": "<category_id>"
+  }
+  ```
+- **Response**:
+  - **Status**: 200 OK or 400 Bad Request
+  - **Body** (on success):
+    ```json
+    {
+      "status": 200,
+      "message": "Success"
+    }
+    ```
+  - **Body** (on failure):
+    ```json
+    {
+      "status": 400,
+      "message": "Add Question Failed"
+    }
+    ```
+
+#### Example (Success):
+
+```json
+{
+  "status": 200,
+  "message": "Success"
+}
+```
+
+---
+
+## 6. **Search Questions by Term**
+
+### **Endpoint**: `/questions/search`
+
+- **Method**: `POST`
+- **Description**: Searches for questions based on a search term.
+- **Request Body**:
+  ```json
+  {
+    "searchTerm": "<term>"
+  }
+  ```
+- **Response**:
+  - **Status**: 200 OK or 400 Bad Request
+  - **Body**:
+    ```json
+    {
+      "status": 200,
+      "questions": [<question_object>, ...],
+      "total_questions": <total_count>,
+      "current_category": "All"
+    }
+    ```
+
+#### Example:
+
+```json
+{
+  "status": 200,
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the capital of France?",
+      "answer": "Paris",
+      "difficulty": 1,
+      "category": "Geography"
+    }
+  ],
+  "total_questions": 1,
+  "current_category": "All"
+}
+```
+
+---
+
+## 7. **Get Questions by Category**
+
+### **Endpoint**: `/categories/<int:id>/questions`
+
+- **Method**: `GET`
+- **Description**: Retrieves all questions for a given category by category ID.
+- **Response**:
+  - **Status**: 200 OK or 404 Not Found
+  - **Body**:
+    ```json
+    {
+      "status": 200,
+      "questions": [<question_object>, ...],
+      "total_questions": <total_count>,
+      "current_category": "<category_type>"
+    }
+    ```
+
+#### Example:
+
+```json
+{
+  "status": 200,
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the capital of France?",
+      "answer": "Paris",
+      "difficulty": 1,
+      "category": "Geography"
+    }
+  ],
+  "total_questions": 10,
+  "current_category": "Geography"
+}
+```
+
+---
+
+## 8. **Start Quiz**
+
+### **Endpoint**: `/quizzes`
+
+- **Method**: `POST`
+- **Description**: Starts a quiz by retrieving a random question from the selected category, excluding any previously answered questions.
+- **Request Body**:
+  ```json
+  {
+    "previous_questions": [<question_id>, ...],
+    "quiz_category": {
+      "id": <category_id>,
+      "type": "<category_type>"
+    }
+  }
+  ```
+- **Response**:
+  - **Status**: 200 OK or 400 Bad Request
+  - **Body**:
+    ```json
+    {
+      "status": 200,
+      "question": <random_question_object>
+    }
+    ```
+
+#### Example:
+
+```json
+{
+  "status": 200,
+  "question": {
+    "id": 1,
+    "question": "What is the capital of France?",
+    "answer": "Paris",
+    "difficulty": 1,
+    "category": "Geography"
+  }
+}
 ```
