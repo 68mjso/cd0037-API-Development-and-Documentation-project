@@ -175,6 +175,8 @@ def get_quizzes():
     for question in result:
         data.append(question.format())
     filtered_data = [item for item in data if item["id"] not in previous_questions]
+    if len(filtered_data) == 0:
+        return jsonify({"status": 200, "question": None})
     rand = random.randint(0, len(filtered_data) - 1)
 
     return jsonify({"status": 200, "question": filtered_data[rand]})
