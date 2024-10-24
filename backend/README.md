@@ -102,8 +102,8 @@ python test_flaskr.py
     ```json
     {
       "status": 200,
-      "questions": [<question_object>, ...],
-      "total_questions": <total_count>,
+      "questions": "[<question_object>, ...]",
+      "total_questions": "<total_count>",
       "categories": {
         "<category_id>": "<category_type>"
       },
@@ -147,7 +147,7 @@ python test_flaskr.py
   {
     "question": "<new_question_text>",
     "answer": "<new_answer_text>",
-    "difficulty": <new_difficulty_level>,
+    "difficulty": "<new_difficulty_level>",
     "category": "<new_category_id>"
   }
   ```
@@ -231,7 +231,7 @@ python test_flaskr.py
   {
     "question": "<question_text>",
     "answer": "<answer_text>",
-    "difficulty": <difficulty_level>,
+    "difficulty": "<difficulty_level>",
     "category": "<category_id>"
   }
   ```
@@ -281,8 +281,8 @@ python test_flaskr.py
     ```json
     {
       "status": 200,
-      "questions": [<question_object>, ...],
-      "total_questions": <total_count>,
+      "questions": "[<question_object>, ...]",
+      "total_questions": "<total_count>",
       "current_category": "All"
     }
     ```
