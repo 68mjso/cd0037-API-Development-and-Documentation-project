@@ -320,8 +320,8 @@ python test_flaskr.py
     ```json
     {
       "status": 200,
-      "questions": [<question_object>, ...],
-      "total_questions": <total_count>,
+      "questions": "[<question_object>, ...]",
+      "total_questions": "<total_count>",
       "current_category": "<category_type>"
     }
     ```
@@ -356,9 +356,9 @@ python test_flaskr.py
 - **Request Body**:
   ```json
   {
-    "previous_questions": [<question_id>, ...],
+    "previous_questions": "[<question_id>, ...]",
     "quiz_category": {
-      "id": <category_id>,
+      "id": "<category_id>",
       "type": "<category_type>"
     }
   }
@@ -369,7 +369,7 @@ python test_flaskr.py
     ```json
     {
       "status": 200,
-      "question": <random_question_object>
+      "question": "<random_question_object>"
     }
     ```
 
